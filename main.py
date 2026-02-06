@@ -155,7 +155,7 @@ async def btn_send_link(message: Message):
 async def handle_url(message: Message):
     url = message.text.strip()
     
-    # Игнорируем нажатия на кнопки меню (уже обработаны выше)
+    # Игнорируем нажатия на кнопки меню
     if url in ["ℹ️ Помощь", "📱 Платформы", "🔗 Отправить ссылку"]:
         return
     
@@ -169,7 +169,7 @@ async def handle_url(message: Message):
         )
         return
     
-    # Подтверждение
+    # ⚠️ ВАЖНО: временные сообщения отправляем БЕЗ клавиатуры!
     msg = await message.answer("📥 Скачиваю видео... ⏳")
     
     try:
@@ -180,6 +180,7 @@ async def handle_url(message: Message):
         # Проверка размера
         file_size = os.path.getsize(filepath) / (1024 * 1024)
         if file_size > 50:
+            # При ошибке — показываем клавиатуру для удобства
             await msg.edit_text(
                 f"⚠️ Видео слишком большое ({file_size:.1f} МБ).\n"
                 "Лимит Telegram: 50 МБ.",
@@ -189,13 +190,14 @@ async def handle_url(message: Message):
             os.rmdir(os.path.dirname(filepath))
             return
         
-        # Отправка
+        # Редактируем БЕЗ клавиатуры
         await msg.edit_text("📤 Отправляю...")
+        
+        # Отправляем чистое видео БЕЗ подписи
         video_file = FSInputFile(filepath, filename=f"{title}.mp4")
         await message.answer_video(
             video=video_file,
-            caption=f"",
-            supports_streaming=True
+            supports_streaming=True  # ← caption отсутствует = чистое видео
         )
         
         # Очистка
@@ -205,6 +207,7 @@ async def handle_url(message: Message):
         
     except Exception as e:
         logger.error(f"Ошибка при обработке {url}: {e}", exc_info=True)
+        # При ошибке — показываем клавиатуру
         await msg.edit_text(
             f"❌ Ошибка: {str(e)}",
             reply_markup=get_main_keyboard()
