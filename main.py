@@ -12,9 +12,12 @@ from aiogram.filters import Command
 from aiogram.enums import ParseMode
 import yt_dlp
 
+from dotenv import load_dotenv
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+load_dotenv()
 BOT_TOKEN = os.getenv("TELEGRAM_API_KEY")
 if not BOT_TOKEN:
     raise ValueError("❌ Переменная окружения TELEGRAM_API_KEY не установлена!")
