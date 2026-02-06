@@ -191,7 +191,6 @@ async def handle_url(message: Message):
         video_file = FSInputFile(filepath, filename=f"{title}.mp4")
         await message.answer_video(
             video=video_file,
-            caption=f"🎬 {title}",
             supports_streaming=True
         )
         
