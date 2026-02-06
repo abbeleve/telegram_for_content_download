@@ -1,0 +1,9 @@
+services:
+  bot:
+    build: .
+    container_name: tg-twitter-downloader
+    environment:
+      - TELEGRAM_API_KEY=${TELEGRAM_API_KEY}
+    volumes:
+      - ./downloads:/app/downloads
+    restart: unless-stopped
